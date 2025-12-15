@@ -10,6 +10,6 @@ const db = await mysql.createConnection({
   port: process.env.DB_PORT
 });
 
-console.log('Conectado a MySQL en Docker correctamente');
+console.log("Conectado a MySQL en correctamente");
 
-export default db;
+export default connection;
