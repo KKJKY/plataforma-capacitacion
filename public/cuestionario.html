@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Resolver Cuestionario</title>
+  <link rel="stylesheet" href="style.css" />
+
+  <style>
+    .contenedor {
+      max-width: 900px;
+      margin: auto;
+      padding: 20px;
+    }
+    .pregunta-box {
+      background: #fff;
+      padding: 18px;
+      margin-bottom: 20px;
+      border-radius: 8px;
+      border-left: 4px solid #0ea5e9;
+    }
+    .pregunta-box h3 {
+      margin: 0 0 10px 0;
+    }
+    .opcion {
+      display: flex;
+      align-items: center;
+      margin-bottom: 8px;
+      cursor: pointer;
+    }
+    .opcion input {
+      margin-right: 10px;
+    }
+    #btn-enviar {
+      margin-top: 20px;
+      padding: 12px;
+      background: #0ea5e9;
+      color: #fff;
+      border: none;
+      width: 100%;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    #resultado {
+      margin-top: 25px;
+      padding: 20px;
+      background: #f0fdf4;
+      border: 2px solid #22c55e;
+      border-radius: 8px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="contenedor">
+    <h1 id="titulo-cuestionario">Cargando...</h1>
+    <p id="descripcion-cuestionario"></p>
+
+    <form id="form-cuestionario"></form>
+
+    <button id="btn-enviar">Enviar Respuestas</button>
+
+    <div id="resultado"></div>
+  </div>
+
+  <script>
+    // ==============================
+    //   CAPTURAR ID DE LA URL
+    // ==============================
+    const params = new URLSearchParams(window.location.search);
+    const cuestionarioId = params.get("id");
+
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (!user) {
+      alert("Debes iniciar sesión");
+      window.location.href = "/";
+    }
+
+    // ==============================
+    //     CARGAR CUESTIONARIO
+    // ==============================
+    async function cargarCuestionario() {
+      const res = await fetch(`/api/cuestionarios/${cuestionarioId}`);
+      const data = await res.json();
+
+      document.getElementById("titulo-cuestionario").textContent = data.titulo;
+      document.getElementById("descripcion-cuestionario").textContent = data.descripcion || "";
+
+      const form = document.getElementById("form-cuestionario");
+      form.innerHTML = "";
+
+      data.preguntas.forEach((p) => {
+        const div = document.createElement("div");
+        div.classList.add("pregunta-box");
+
+        let opcionesHTML = "";
+
+        p.opciones.forEach((op) => {
+          opcionesHTML += `
+            <label class="opcion">
+              <input type="radio" name="preg_${p.id}" value="${op.id}" required>
+              ${op.texto}
+            </label>
+          `;
+        });
+
+        div.innerHTML = `
+          <h3>${p.enunciado}</h3>
+          ${opcionesHTML}
+        `;
+
+        form.appendChild(div);
+      });
+    }
+
+    cargarCuestionario();
+
+    // ==============================
+    //     ENVIAR RESPUESTAS
+    // ==============================
+    document.getElementById("btn-enviar").addEventListener("click", async () => {
+      const form = document.getElementById("form-cuestionario");
+      const inputs = form.querySelectorAll("input[type=radio]:checked");
+
+      if (inputs.length === 0) {
+        alert("Debes responder todas las preguntas.");
+        return;
+      }
+
+      const respuestas = [];
+
+      inputs.forEach((input) => {
+        const preguntaId = input.name.replace("preg_", "");
+        const opcionId = input.value;
+
+        respuestas.push({
+          pregunta_id: Number(preguntaId),
+          opcion_id: Number(opcionId)
+        });
+      });
+
+      const res = await fetch(`/api/cuestionarios/${cuestionarioId}/resolver`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          usuario_id: user.id,
+          respuestas
+        })
+      });
+
+      const data = await res.json();
+
+      mostrarResultados(data);
+    });
+
+    // ==============================
+    //     MOSTRAR RESULTADOS
+    // ==============================
+    function mostrarResultados(data) {
+      const box = document.getElementById("resultado");
+      box.style.display = "block";
+
+      box.innerHTML = `
+        <h2>Resultados</h2>
+        <p><strong>Puntaje:</strong> ${data.puntaje}%</p>
+        <p><strong>Correctas:</strong> ${data.correctas}</p>
+        <p><strong>Incorrectas:</strong> ${data.incorrectas}</p>
+        <hr>
+        <h3>Detalle:</h3>
+      `;
+
+      data.detalle.forEach((d) => {
+        box.innerHTML += `
+          <p><strong>${d.pregunta}</strong><br>
+          Tu respuesta: ${d.respuesta_usuario}<br>
+          Correcta: ${d.respuesta_correcta}</p>
+          <hr>
+        `;
+      });
+    }
+  </script>
+
+</body>
+</html>

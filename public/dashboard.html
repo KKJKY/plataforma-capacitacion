@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Panel de Capacitación - JA Perú</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <!--  Sidebar -->
+    <aside class="sidebar">
+      <div class="logo">
+        <img src="img/JAPeru.png" alt="JA Perú">
+      </div>
+      <nav>
+        <ul>
+          <li><a href="#" data-seccion="inicio"> Inicio</a></li>
+          <li><a href="#" data-seccion="manuales"> Manuales</a></li>
+          <li><a href="#" data-seccion="faq"> Preguntas</a></li>
+          <li><a href="#" data-seccion="usuarios"> Gestión de Usuarios</a></li>
+          <li><a href="#" data-seccion="cuestionarios"> Cuestionarios</a></li>
+        </ul>
+      </nav>
+    </aside>
+
+    <!--  Contenido principal -->
+    <main class="main-content">
+      <header class="topbar">
+        <span id="usuario-nombre">Cargando...</span>
+        <button id="logout">Cerrar sesión</button>
+      </header>
+
+      <!--  INICIO -->
+      <section id="inicio" class="seccion visible">
+        <div class="welcome-card">
+          <h1>Bienvenidos a la Plataforma de Capacitación</h1>
+          <p>Explora los manuales y recursos disponibles para potenciar tu aprendizaje en Salesforce.</p>
+
+          <div class="welcome-grid">
+            <div class="welcome-box">
+              <h3> Manuales</h3>
+              <button class="btn-ver" onclick="mostrarSeccion('manuales')">Ver</button>
+            </div>
+
+            <div class="welcome-box">
+              <h3> Preguntas Frecuentes</h3>
+              <button class="btn-ver" onclick="mostrarSeccion('faq')">Ver</button>
+            </div>
+
+            <div class="welcome-box" id="card-usuarios">
+              <h3> Gestión de Usuarios</h3>
+              <button class="btn-ver" onclick="mostrarSeccion('usuarios')">Ver</button>
+            </div>
+          </div>
+
+          <h2>Manuales Recientes</h2>
+          <div class="welcome-grid">
+            <div class="welcome-box">
+              <h3>Manual de Procedimientos</h3>
+              <button class="btn-ver" onclick="mostrarSeccion('manuales')">Ver</button>
+            </div>
+
+            <div class="welcome-box">
+              <h3>Manual de Inducción</h3>
+              <button class="btn-ver" onclick="mostrarSeccion('manuales')">Ver</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!--  CUESTIONARIOS -->
+      <section id="cuestionarios" class="seccion">
+        <h2> Cuestionarios</h2>
+
+        <!-- Botón visible SOLO para ADMIN -->
+        <button id="btn-nuevo-cuestionario" class="btn-subir">+ Nuevo Cuestionario</button>
+
+        <!-- Listado de categorías (manuales) -->
+        <div id="lista-categorias-cuestionarios" class="cuestionarios-container">
+          <p>Cargando cuestionarios...</p>
+        </div>
+      </section>
+
+      <!-- MODAL NUEVO CUESTIONARIO -->
+    <div id="modal-cuestionario" class="modal">
+      <div class="modal-contenido">
+        <h3>Crear Nuevo Cuestionario</h3>
+
+        <form id="form-nuevo-cuestionario">
+          <label>Título</label>
+          <input type="text" name="titulo" required>
+
+          <label>Descripción</label>
+          <textarea name="descripcion" rows="3"></textarea>
+
+          <label>Manual asociado</label>
+          <select name="manual_id" id="manuales-select" required>
+            <option value="">Seleccionar manual...</option>
+          </select>
+
+          <div class="modal-botones">
+            <button type="button" id="cerrar-modal-cuestionario" class="btn-cancelar">Cancelar</button>
+            <button type="submit" class="btn-subir-modal">Crear</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+
+      <!-- ADMINISTRAR CUESTIONARIO -->
+      <section id="admin-cuestionario" class="seccion">
+        <h2 id="admin-cuestionario-titulo">Administrar Cuestionario</h2>
+
+        <button id="btn-nueva-pregunta" class="btn-subir">+ Nueva Pregunta</button>
+
+        <div id="lista-preguntas" class="preguntas-container">
+          <p>Cargando preguntas...</p>
+        </div>
+      </section>
+
+      <!-- MODAL NUEVA PREGUNTA -->
+      <div id="modal-pregunta" class="modal">
+        <div class="modal-contenido">
+          <h3>Nueva Pregunta</h3>
+
+          <form id="form-nueva-pregunta">
+            <label>Enunciado</label>
+            <textarea name="enunciado" rows="3" required></textarea>
+
+            <div class="modal-botones">
+              <button type="button" id="cerrar-modal-pregunta" class="btn-cancelar">Cancelar</button>
+              <button type="submit" class="btn-subir-modal">Crear</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- MODAL NUEVA OPCIÓN -->
+      <div id="modal-opcion" class="modal">
+        <div class="modal-contenido">
+          <h3>Nueva Opción</h3>
+
+          <form id="form-nueva-opcion">
+            <label>Texto de la opción</label>
+            <input type="text" name="texto" required>
+
+            <label>¿Es la respuesta correcta?</label>
+            <select name="correcta">
+              <option value="0">No</option>
+              <option value="1">Sí</option>
+            </select>
+
+            <div class="modal-botones">
+              <button type="button" id="cerrar-modal-opcion" class="btn-cancelar">Cancelar</button>
+              <button type="submit" class="btn-subir-modal">Crear</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Modal NUEVA PREGUNTA -->
+      <div id="modal-pregunta" class="modal">
+        <div class="modal-contenido">
+          <h3>Nueva Pregunta</h3>
+
+          <form id="form-nueva-pregunta">
+            <label>Enunciado de la pregunta</label>
+            <textarea name="enunciado" rows="2" required></textarea>
+
+            <label>Opciones</label>
+            <div id="opciones-dinamicas"></div>
+
+            <button type="button" id="btn-agregar-opcion" class="btn-subir">
+              + Agregar opción
+            </button>
+
+            <div class="modal-botones">
+              <button type="button" class="btn-cancelar" id="cerrar-modal-pregunta">
+                Cancelar
+              </button>
+              <button type="submit" class="btn-subir-modal">
+                Guardar Pregunta
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+
+      <!--   MANUALES con Categorías     -->
+      <section id="manuales" class="seccion">
+        <h2>Manuales</h2>
+
+        <!-- SOLO ADMIN VE ESTE BOTÓN -->
+        <button id="btn-nueva-categoria" class="btn-subir"> Nueva Categoría</button>
+
+        <!-- Modal para crear nueva categoría -->
+        <div id="modal-categoria" class="modal">
+          <div class="modal-contenido">
+            <h3>Nueva Categoría</h3>
+
+            <form id="form-nueva-categoria">
+              <label>Nombre de la categoría</label>
+              <input type="text" name="nombre" required>
+
+              <div class="modal-botones">
+                <button type="button" id="cerrar-modal-categoria" class="btn-cancelar">Cancelar</button>
+                <button type="submit" class="btn-subir-modal">Crear</button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <!-- Modal subir material -->
+        <button id="btn-abrir-modal" class="btn-subir"> Subir material</button>
+
+        <div id="modal-subida" class="modal">
+          <div class="modal-contenido">
+            <h3>Subir Material</h3>
+
+            <form id="form-material" enctype="multipart/form-data">
+              
+              <label for="titulo_material">Título</label>
+              <input type="text" name="titulo" id="titulo_material" required>
+
+              <label for="descripcion_material">Descripción</label>
+              <textarea name="descripcion" id="descripcion_material" rows="3"></textarea>
+
+              <!-- Lista de categorías DINÁMICA -->
+              <label for="categoria_id">Categoría</label>
+              <select name="categoria_id" id="categoria_id" required>
+                <option value="">Seleccione una categoría...</option>
+              </select>
+
+              <label for="tipo_archivo">Tipo de archivo</label>
+                <select name="tipo_archivo" id="tipo_archivo" required>
+                  <option value="">Seleccione tipo...</option>
+                  <option value="pdf">PDF</option>
+                  <option value="word">Word</option>
+                  <option value="ppt">Presentación (PPT/PPTX)</option>
+                  <option value="video">Video</option>
+                  <option value="imagen">Imagen</option>
+                </select>
+
+              <label for="archivo">Archivo</label>
+              <input type="file" name="archivo" id="archivo" 
+                accept=".pdf,.ppt,.pptx,.doc,.docx,.mp4,.jpg,.png,.jpeg" required>
+
+              <div class="modal-botones">
+                <button type="button" id="btn-cerrar-modal" class="btn-cancelar">Cancelar</button>
+                <button type="submit" class="btn-subir-modal">Subir</button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <!-- GRID DE CATEGORÍAS (Estilo A) -->
+        <div id="lista-categorias" class="categoria-grid">
+          
+        </div>
+      </section>
+
+
+      <!--  PREGUNTAS -->
+      <section id="faq" class="seccion">
+        <h2>Preguntas Frecuentes</h2>
+        <div class="faq-item">
+          <h3>¿Cómo accedo a Salesforce?</h3>
+          <p>Puedes acceder desde tu cuenta institucional iniciando sesión en la plataforma.</p>
+        </div>
+        <div class="faq-item">
+          <h3>¿Dónde se registran las acciones educativas?</h3>
+          <p>Dentro del módulo de “Manuales”, encontrarás un apartado para registrar tus actividades y reportes.</p>
+        </div>
+        <div class="faq-item">
+          <h3>¿Cómo puedo crear un informe?</h3>
+          <p>Consulta el documento “Guía de informes y paneles” en la sección de manuales.</p>
+        </div>
+      </section>
+
+      <!--  USUARIOS -->
+      <section id="usuarios" class="seccion">
+        <h2>Gestión de Usuarios</h2>
+        <button id="btn-nuevo" class="btn-subir"> Nuevo Usuario</button>
+        <div id="lista-usuarios" class="usuarios-container">
+          <p>Cargando usuarios...</p>
+        </div>
+      </section>
+
+      <!-- MODAL PARA CREAR NUEVO USUARIO -->
+      <div id="modal-usuario" class="modal">
+        <div class="modal-contenido">
+          <h3>Registrar Nuevo Usuario</h3>
+
+          <form id="form-nuevo-usuario">
+            <label>Nombre completo</label>
+            <input type="text" name="nombre" required>
+
+            <label>Correo electrónico</label>
+            <input type="email" name="correo" required>
+
+            <label>Rol</label>
+            <select name="rol" required>
+              <option value="practicante">Practicante</option>
+              <option value="administrador">Administrador</option>
+            </select>
+
+            <label>Contraseña</label>
+            <input type="password" name="contrasena" placeholder="Opcional (123456 por defecto)">
+
+            <label>Estado</label>
+            <select name="estado" required>
+              <option value="Activo">Activo</option>
+              <option value="Inactivo">Inactivo</option>
+            </select>
+
+            <div class="modal-botones">
+              <button type="button" id="cerrar-modal-usuario" class="btn-cancelar">Cancelar</button>
+              <button type="submit" class="btn-subir-modal">Crear Usuario</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- VISTA INDIVIDUAL DE UNA CATEGORÍA -->
+      <section id="categoria-detalle" class="seccion">
+        <button id="volver-manuales" class="btn-cancelar">Volver</button>
+        <h2 id="categoria-titulo"></h2>
+
+        <div id="materiales-lista" class="materiales-grid">
+            <p>Cargando...</p>
+        </div>
+      </section>
+
+
+    </main>
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/dashboard.js"></script>
+  <script src="js/materiales.js"></script>
+  
+  
+</body>
+</html>
