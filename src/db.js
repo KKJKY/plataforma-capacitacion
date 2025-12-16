@@ -1,16 +1,14 @@
 import mysql from "mysql2/promise";
 
-const db = await mysql.createConnection({
-  host: process.env.MYSQLHOST,
-  user: process.env.MYSQLUSER,
-  password: process.env.MYSQLPASSWORD,
-  database: process.env.MYSQLDATABASE,
-  port: Number(process.env.MYSQLPORT),
+const pool = mysql.createPool({
+  uri: process.env.MYSQL_URL,
+  waitForConnections: true,
+  connectionLimit: 5,
+  queueLimit: 0,
 });
 
-console.log("Conectado a MySQL correctamente");
+export default pool;
 
-export default db;
 
 
 
