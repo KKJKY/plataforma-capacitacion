@@ -23,7 +23,7 @@ export const login = async (req, res) => {
     }
 
     // Validar contraseña
-    const esValida = contrasena === user.contrasena;
+    const esValida = await bcrypt.compare(contrasena, user.contrasena);
     // Si usas hash -> const esValida = await bcrypt.compare(contrasena, user.contrasena);
 
     if (!esValida) {
