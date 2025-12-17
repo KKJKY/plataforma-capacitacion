@@ -89,17 +89,19 @@ export const actualizarEstadoUsuario = async (req, res) => {
 export const crearUsuario = async (req, res) => {
   const { nombre, correo, rol, contrasena, estado } = req.body;
 
-  if (!nombre || !correo || !rol) {
+  if (!nombre || !correo || !rol || !contrasena) {
     return res.status(400).json({ error: "Faltan datos obligatorios" });
   }
 
   try {
-    const pass = contrasena || "123456";
     const estadoNormalizado = (estado || "activo").toLowerCase();
+
+    // HASH DE CONTRASEÑA
+    const hash = await bcrypt.hash(contrasena, 10);
 
     await db.query(
       "INSERT INTO usuarios (nombre, correo, contrasena, rol, estado) VALUES (?, ?, ?, ?, ?)",
-      [nombre, correo, pass, rol, estadoNormalizado]
+      [nombre, correo, hash, rol, estadoNormalizado]
     );
 
     res.status(201).json({ message: "Usuario creado correctamente" });
@@ -108,6 +110,7 @@ export const crearUsuario = async (req, res) => {
     res.status(500).json({ error: "Error interno al crear usuario" });
   }
 };
+
 
 
 // === ELIMINAR USUARIO ===
