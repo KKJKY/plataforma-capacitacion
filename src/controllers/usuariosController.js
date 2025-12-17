@@ -94,10 +94,8 @@ export const crearUsuario = async (req, res) => {
   }
 
   try {
-    const estadoNormalizado = (estado || "activo").toLowerCase();
-
-    // HASH DE CONTRASEÑA
     const hash = await bcrypt.hash(contrasena, 10);
+    const estadoNormalizado = (estado || "activo").toLowerCase();
 
     await db.query(
       "INSERT INTO usuarios (nombre, correo, contrasena, rol, estado) VALUES (?, ?, ?, ?, ?)",
@@ -107,7 +105,7 @@ export const crearUsuario = async (req, res) => {
     res.status(201).json({ message: "Usuario creado correctamente" });
   } catch (error) {
     console.error("Error al crear usuario:", error);
-    res.status(500).json({ error: "Error interno al crear usuario" });
+    res.status(500).json({ error: "Error interno del servidor" });
   }
 };
 
