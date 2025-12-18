@@ -6,6 +6,8 @@ import usuariosRoutes from "./routes/usuarios.js";
 import materialesRoutes from "./routes/materialesRoutes.js";
 import cuestionariosRoutes from "./routes/cuestionariosRoutes.js";
 import categoriasRoutes from "./routes/categoriasRoutes.js";
+import fs from "fs";
+import path from "path";
 import db from "./db.js";
 
 dotenv.config();
@@ -13,6 +15,14 @@ dotenv.config();
 const app = express();
 app.use(cors());
 app.use(express.json());
+
+const uploadsDir = path.join("public", "uploads");
+
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir, { recursive: true });
+  console.log(" Carpeta public/uploads creada");
+}
+
 
 //  Rutas API
 app.use("/api/materiales", materialesRoutes);
